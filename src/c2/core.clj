@@ -14,7 +14,7 @@
         (->> (slurp file)
           links/internal
           (map #(str (.getName file) " " % ))
-          (clojure.string/join "\\\\n")
+          (clojure.string/join "\n")
           (.write output))))))
 
 (defn graph-it [g line]

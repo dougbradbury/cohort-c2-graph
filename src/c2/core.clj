@@ -7,15 +7,19 @@
 (def f (clojure.java.io/file "data"))
 (def fs (file-seq f))
 
-(defn extract-links []
-  (with-open [output (clojure.java.io/writer "out/simple.txt" :append true)]
-    (doseq [file fs]
-      (if-not (.isDirectory file)
-        (->> (slurp file)
+(defn links-from-file [file]
+  (if-not (.isDirectory file)
+    (->> (slurp file)
           links/internal
           (map #(str (.getName file) " " % ))
-          (clojure.string/join "\n")
-          (.write output))))))
+          (clojure.string/join "\n")))
+  ""
+  )
+
+(defn extract-links []
+  (with-open [output (clojure.java.io/writer "out/simple.txt" :append true)]
+    (doseq [result (pmap links-from-file fs)]
+      (.write output result))))
 
 (defn graph-it [g line]
   (let [[src target] (clojure.string/split line #" ")]
